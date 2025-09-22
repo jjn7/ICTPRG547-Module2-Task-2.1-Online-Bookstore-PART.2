@@ -1,0 +1,118 @@
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////
+# TEST 1 - CHECKING GUI WINDOW OPENS - 22/09/2025
+
+# Basic GUI window test with tkinter
+import tkinter as tk
+from models.book import Book
+from data_structures.linked_list import DoubleLinkedList
+from data_structures.hash_table import HashTable
+from data_structures.binary_tree import BinaryTree
+
+class BookstoreGUI:
+    def __init__(self):
+        self.root = tk.Tk()
+        self.root.title("Online Bookstore Inventory System")
+        self.root.geometry("800x600")
+
+if __name__ == "__main__":
+    app = BookstoreGUI()
+    app.run()
+
+
+## EXPECTED RESULT:
+GUI window opens with title and 800x600 size
+
+
+## RESULT (CORRECT):
+Window opened successfully with correct title bar
+Size appears correct 800x600
+
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////
+# TEST 2 - CHECKING DATA STRUCTURES LOAD IN GUI - 22/09/2025
+
+## CODE ADDED:
+        # Initialize data structures from Part 1
+        self.inventory = DoubleLinkedList()
+        self.quick_lookup = HashTable()
+        self.tree_lookup = BinaryTree()
+
+        # Add some sample books
+        self.load_sample_books()
+
+        # Show book count
+        book_count_label = tk.Label(self.root, text=f"Books loaded: {self.inventory.size}")
+        book_count_label.pack()
+
+
+## EXPECTED RESULT:
+Window shows "Books loaded: 3" confirming data structures work
+
+
+## RESULT (CORRECT):
+Window displays "Books loaded: 3"
+Sample books loaded into all 3 data structures
+Harry Potter, Animal Farm, The Great Gatsby
+
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////
+# TEST 3 - CHECKING VIEW BOOKS BUTTON WORKS - 22/09/2025
+
+## CODE ADDED:
+        # Add one simple button to view books
+        view_button = tk.Button(self.root, text="View Books", command=self.view_books)
+        view_button.pack()
+
+        # Add basic text area to display book information
+        self.text_area = tk.Text(self.root, height=15, width=60)
+        self.text_area.pack()
+
+    def view_books(self):
+        # Clear the text area first
+        self.text_area.delete(1.0, tk.END)
+
+        # Display books from linked list
+        self.text_area.insert(tk.END, "Books in Inventory:\n\n")
+
+        current_node = self.inventory.head
+        book_number = 1
+
+        while current_node is not None:
+            book = current_node.data
+            book_info = f"{book_number}. {book}\n"
+            book_info += f"   Genre: {book.genre}, Price: ${book.price}\n\n"
+
+            self.text_area.insert(tk.END, book_info)
+
+            current_node = current_node.next
+            book_number += 1
+
+
+## EXPECTED RESULT:
+Click View Books button shows 3 books in text area
+Books displayed in order from linked list
+
+
+## RESULT (CORRECT):
+Button clicked - text area shows:
+
+Books in Inventory:
+
+1. ID: 12345, Title: Harry Potter, Author: J.K. Rowling
+   Genre: Fantasy, Price: $29.99
+
+2. ID: 67890, Title: Animal Farm, Author: George Orwell
+   Genre: Fiction, Price: $19.99
+
+3. ID: 23456, Title: The Great Gatsby, Author: F. Scott Fitzgerald
+   Genre: Historical Fiction, Price: $24.99
+
+
+## TEST NOTES:
+Button works correctly
+Text area displays properly
+Linked list traversal working
+Book information formatted correctly

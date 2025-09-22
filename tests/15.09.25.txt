@@ -1,0 +1,565 @@
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////
+# TEST 1 - CHECKING MAIN.PY FILE OUTPUT WITH HEADER - 15/09/2025
+
+# Main function 
+def main():
+    # Print header
+    print("Bookstore Inventory")
+    print("=" * 30)
+
+if __name__ == "__main__":
+    main()
+
+
+
+## EXPECTED OUTPUT:
+
+Bookstore Inventory
+==============================
+
+
+## RESULT (CORRECT):
+
+Bookstore Inventory
+==============================
+
+
+
+
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////
+# TEST 2 - CHECKING MAIN.PY FILE OUTPUT WITH HEADER & TEST BOOKS - 15/09/2025
+
+def main():
+    inventory = DoubleLinkedList()
+    
+    # Test with sample books
+    book1 = Book(12345, "Harry Potter", "J.K. Rowling", "Fantasy", 29.99)
+    book2 = Book(67890, "Animal Farm", "George Orwell", "Fiction", 19.99)
+    
+    # Print header
+    print("Bookstore Inventory")
+    print("=" * 30)
+    print(book1)  # Uses the __str__ method previously defined
+    print(book2)
+    print()
+
+if __name__ == "__main__":
+    main()
+
+
+
+## EXPECTED RESULT:
+Both Test Books printed out as definted string in book.py
+
+
+## RESULT (CORRECT):
+
+PS C:\Users\Joel\Desktop\KIK Course\ICTPRG547-Module2-Task-2.1-Online-Bookstore> python ./main.py
+Bookstore Inventory
+==============================
+ID: 12345, Title: Harry Potter, Author: J.K. Rowling
+ID: 67890, Title: Animal Farm, Author: George Orwell
+
+
+
+
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////
+# TEST 3 - CHECKING MAIN.PY FILE OUTPUT WITH HEADER & TEST BOOK PROPERTIES - 15/09/2025
+
+
+## EXPECTED RESULT:
+Harry Potter Book Titlem, Price and Genre
+
+
+## RESULT (CORRECT):
+
+Bookstore Inventory
+==============================
+Testing Book Properties:
+Book 1 Title: Harry Potter
+Book 1 Price: $29.99
+Book 1 Genre: $Fantasy
+
+
+
+
+
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////
+# TEST 4 - CHECKING MAIN.PY ADD BOOKS FUNCTION WITH TEST BOOKS - 15/09/2025
+
+
+def main():
+    inventory = DoubleLinkedList()
+    
+    # Test with sample books
+    book1 = Book(12345, "Harry Potter", "J.K. Rowling", "Fantasy", 29.99)
+    book2 = Book(67890, "Animal Farm", "George Orwell", "Fiction", 19.99)
+    
+    print("Adding books to inventory...")
+    inventory.add_book(book1)
+    print(f"Added book 1. Inventory size: {inventory.size}")
+    
+    inventory.add_book(book2)
+    print(f"Added book 2. Inventory size: {inventory.size}")
+    
+    # Test that head and tail are set correctly
+    print(f"First book in inventory: {inventory.head.data}")
+    print(f"Last book in inventory: {inventory.tail.data}")
+
+
+if __name__ == "__main__":
+    main()
+
+
+
+## EXPECTED RESULT:
+Print adding books and then list 2 book stings that have been added with ID and properties
+
+
+
+## RESULT (CORRECT):
+
+Adding books to inventory...
+Added book 1. Inventory size: 1
+Added book 2. Inventory size: 2
+First book in inventory: ID: 12345, Title: Harry Potter, Author: J.K. Rowling
+Last book in inventory: ID: 67890, Title: Animal Farm, Author: George Orwell
+
+
+
+
+
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////
+# TEST 5 - CHECKING MAIN.PY DISPLAY ALL BOOKS FUNCTION WITH TEST BOOKS - 15/09/2025
+
+
+## EXPECTED RESULT:
+Print test books added (Harry Potter and Animal Farm)
+
+## RESULT (CORRECT):
+
+Bookstore Inventory
+==============================
+Displaying (2 books now):
+--------------------------------------------------
+1. ID: 12345, Title: Harry Potter, Author: J.K. Rowling
+2. ID: 67890, Title: Animal Farm, Author: George Orwell
+--------------------------------------------------
+
+
+
+
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////
+# TEST 6 - CHECKING MAIN.PY REMOVE BOOK BY ID - 15/09/2025
+
+
+## EXPECTED RESULT:
+Remove Harry Potter Book by ID (12345)
+
+
+## RESULT ( --- FAILED --- ):
+
+Bookstore Inventory
+==============================
+
+Testing removal:
+No books stored
+Book 12345 not found
+No books stored
+
+
+## FAILED TEST NOTES:
+// Removed Add Books function before testing - Caused No books stored returned
+
+
+
+
+
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////
+# TEST 7 - CHECKING MAIN.PY REMOVE BOOK BY ID // FAILED TEST 7 INVESTIGATION // ADDED BACK ADD BOOKS FUNCTION- 15/09/2025
+
+
+## EXPECTED RESULT:
+Remove Harry Potter Book by ID (12345)
+Displays Animal Book as only other book
+
+
+## RESULT ( --- FAILED --- ):
+
+Bookstore Inventory
+==============================
+
+Testing removal:
+Removed book: ID: 12345, Title: Harry Potter, Author: J.K. Rowling
+Displaying (1 books now):
+--------------------------------------------------
+1. ID: 12345, Title: Harry Potter, Author: J.K. Rowling
+2. ID: 67890, Title: Animal Farm, Author: George Orwell
+--------------------------------------------------
+
+
+## FAILED TEST NOTES:
+// Displayed 2 books remaining after removal. Futher investifation required
+
+
+
+
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////
+# TEST 8 - CHECKING MAIN.PY REMOVE BOOK BY ID // TEST 7 FAILED // TESTING WITH 3 BOOKS - 15/09/2025
+
+
+## EXPECTED RESULT:
+Remove Harry Potter Book by ID (12345)
+Displays Animal Book and The Great Gatsby as remaining books
+
+
+## RESULT ( --- FAILED --- ):
+
+Bookstore Inventory
+==============================
+Displaying (3 books now):
+--------------------------------------------------
+1. ID: 12345, Title: Harry Potter, Author: J.K. Rowling
+2. ID: 67890, Title: Animal Farm, Author: George Orwell
+3. ID: 23456, Title: The Great Gatsby, Author: F. Scott Fitzgerald
+--------------------------------------------------
+
+Testing removal:
+Removed book: ID: 12345, Title: Harry Potter, Author: J.K. Rowling
+Displaying (2 books now):
+--------------------------------------------------
+1. ID: 12345, Title: Harry Potter, Author: J.K. Rowling
+2. ID: 67890, Title: Animal Farm, Author: George Orwell
+3. ID: 23456, Title: The Great Gatsby, Author: F. Scott Fitzgerald
+
+
+## FAILED TEST NOTES:
+// Displayed 3 books remaining after removal. Found Syntax error in Remove Book Function:
+// Should only have 1x '=' to assign the next book as head. Error syntax below:
+
+elif current_node == self.head:
+        self.head == current_node.next   
+        self.head.prev = None
+
+
+
+
+
+
+
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////
+# TEST 9 - CHECKING MAIN.PY REMOVE BOOK BY ID // TEST 8 FAILED // TESTING WITH 3 BOOKS + CORRECTED REMOVE BOOKS FUNCTION (SYNTAX ERROR) - 15/09/2025
+
+
+
+## EXPECTED RESULT:
+Remove Harry Potter Book by ID (12345)
+Displays Animal Book and The Great Gatsby as remaining books
+
+
+
+## RESULT (CORRECT):
+
+Bookstore Inventory
+==============================
+Displaying (3 books now):
+--------------------------------------------------
+1. ID: 12345, Title: Harry Potter, Author: J.K. Rowling
+2. ID: 67890, Title: Animal Farm, Author: George Orwell
+3. ID: 23456, Title: The Great Gatsby, Author: F. Scott Fitzgerald
+--------------------------------------------------
+
+Testing removal:
+Removed book: ID: 12345, Title: Harry Potter, Author: J.K. Rowling
+Displaying (2 books now):
+--------------------------------------------------
+1. ID: 67890, Title: Animal Farm, Author: George Orwell
+2. ID: 23456, Title: The Great Gatsby, Author: F. Scott Fitzgerald
+--------------------------------------------------
+
+
+
+
+
+
+
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////
+# TEST 10 - Testing hash_table.py - Quick Lookup - 15/09/2025
+
+
+
+
+## EXPECTED RESULT:
+Lists 3x Test Books
+Returns Found Harry Potter Book
+Retursn Book ID 99999 Not found (as expected)
+
+
+
+## RESULT ( --- FAILED --- ):
+
+Bookstore Inventory
+==============================
+Displaying (3 books now):
+--------------------------------------------------
+1. ID: 12345, Title: Harry Potter, Author: J.K. Rowling
+2. ID: 67890, Title: Animal Farm, Author: George Orwell
+3. ID: 23456, Title: The Great Gatsby, Author: F. Scott Fitzgerald
+--------------------------------------------------
+
+==============================
+Testing Hash Table:
+==============================
+Added book ID 12345 to hash position 5
+Added book ID 67890 to hash position 0
+Added book ID 23456 to hash position 6
+Traceback (most recent call last):
+  File "C:\Users\Joel\Desktop\KIK Course\ICTPRG547-Module2-Task-2.1-Online-Bookstore\main.py", line 57, in <module>
+    main()
+  File "C:\Users\Joel\Desktop\KIK Course\ICTPRG547-Module2-Task-2.1-Online-Bookstore\main.py", line 37, in main
+    quick_lookup.display_all()
+    ^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'HashTable' object has no attribute 'display_all'
+
+
+## FAILED TEST NOTES:
+// Functions not found. Did not save updated main.py file before testing with display_all method added
+// Saved and retested with incorrect indentation.
+
+
+
+
+
+
+
+
+
+
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////
+# TEST 11 - Testing hash_table.py - TEST 10 FAILED - SAVED AND CORRECTED SYNAXC - 15/09/2025
+
+
+
+
+## EXPECTED RESULT:
+Lists 3x Test Books
+Returns Found Harry Potter Book
+Retursn Book ID 99999 Not found (as expected)
+
+
+
+## RESULT (CORRECT):
+
+Bookstore Inventory
+==============================
+Displaying (3 books now):
+--------------------------------------------------
+1. ID: 12345, Title: Harry Potter, Author: J.K. Rowling
+2. ID: 67890, Title: Animal Farm, Author: George Orwell
+3. ID: 23456, Title: The Great Gatsby, Author: F. Scott Fitzgerald
+--------------------------------------------------
+
+==============================
+Testing Hash Table:
+==============================
+Added book ID 12345 to hash position 5
+Added book ID 67890 to hash position 0
+Added book ID 23456 to hash position 6
+Hash Table Contents (3 books):
+Position 0:
+  - ID: 67890, Title: Animal Farm, Author: George Orwell
+Position 5:
+  - ID: 12345, Title: Harry Potter, Author: J.K. Rowling
+Position 6:
+  - ID: 23456, Title: The Great Gatsby, Author: F. Scott Fitzgerald
+----------------------------------------
+
+Testing book lookups:
+Found: ID: 12345, Title: Harry Potter, Author: J.K. Rowling
+Book ID 99999 not found (as expected)
+
+
+
+
+
+
+
+
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////
+# TEST 12 - Testing binary_tree.py - 15/09/2025
+
+## CODE:
+def main():
+    # Initialize data structures
+    inventory = DoubleLinkedList()
+    quick_lookup = HashTable()  # Including Hash Table
+    tree_lookup = BinaryTree()  # Including Binary Tree
+    
+    # Test with sample books
+    book1 = Book(12345, "Harry Potter", "J.K. Rowling", "Fantasy", 29.99)
+    book2 = Book(67890, "Animal Farm", "George Orwell", "Fiction", 19.99)
+    book3 = Book(23456, "The Great Gatsby", "F. Scott Fitzgerald", "Historical Fiction", 24.99)
+    
+    # Print header
+    print("Bookstore Inventory")
+    print("=" * 30)
+
+    # Add books to inventory
+    inventory.add_book(book1)
+    inventory.add_book(book2)
+    inventory.add_book(book3)
+    inventory.display_all()       # Show added books
+    
+    # TESTING BINARY TREE OUTPUT
+    print("\n" + "=" * 30)
+    print("Testing Hash Table:")
+    print("=" * 30)
+
+    tree_lookup.add_book(book1) # Harry Potter Becomes Root
+    tree_lookup.add_book(book2) # Animal Farm added to left of HP (Alphabetical order)
+    tree_lookup.add_book(book3) # The Great Gatsby goes right of HP (Alphabetical order)
+    
+    # Display hash table contents
+    quick_lookup.display_all()
+
+    # Test finding existing book
+    print("\nTesting book lookups:")
+    found_book = tree_lookup.search_by_title("Harry Potter")
+    if found_book:
+        print(f"Found: {found_book}")
+    else:
+        print("Book not found")
+    
+    # Test finding non-existent book
+    not_found = quick_lookup.search_by_title("LOTR")
+    if not_found:
+        print(f"Found: {not_found}")
+    else:
+        print("Book not found (as expected)")
+
+# only run main() if this file is run directly (not if it's imported by another file)
+# Every Python file has a built-in variable called __name__. Python automatically sets this variable differently depending on how the file is used.
+if __name__ == "__main__":
+    main()
+
+
+
+
+## EXPECTED RESULT:
+Lists 3x Test Books (With Binary Tree Positions)
+Returns Found Harry Potter Book
+Returns Book Not found (as expected)
+
+
+
+
+## RESULT ( --- FAILED --- ):
+
+
+Bookstore Inventory
+==============================
+Displaying (3 books now):
+--------------------------------------------------
+1. ID: 12345, Title: Harry Potter, Author: J.K. Rowling
+2. ID: 67890, Title: Animal Farm, Author: George Orwell
+3. ID: 23456, Title: The Great Gatsby, Author: F. Scott Fitzgerald
+--------------------------------------------------
+
+==============================
+Testing Hash Table:
+==============================
+Added 'Harry Potter' as root of tree
+Added 'Animal Farm' to left of 'Harry Potter'
+Added 'The Great Gatsby' to right of 'Harry Potter'
+Hash Table Contents (0 books):
+----------------------------------------
+
+Testing book lookups:
+Found: ID: 12345, Title: Harry Potter, Author: J.K. Rowling
+Traceback (most recent call last):
+  File "C:\Users\Joel\Desktop\KIK Course\ICTPRG547-Module2-Task-2.1-Online-Bookstore\main.py", line 59, in <module>
+    main()
+  File "C:\Users\Joel\Desktop\KIK Course\ICTPRG547-Module2-Task-2.1-Online-Bookstore\main.py", line 50, in main
+    not_found = quick_lookup.search_by_title("LOTR")
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'HashTable' object has no attribute 'search_by_title'
+
+
+
+
+
+## FAILED TEST NOTES:
+// Did not update test functions in main correctly. left code from testing HashTable with confusing output and description.
+// display_sorted should have been display_all_sorted as per BinaryTree method
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////
+# TEST 13 - Testing binary_tree.py - TEST 12 FAILED - TEST FUNCTIONS INCORRECT (MISUSED FUNCTION) 15/09/2025
+
+
+
+## EXPECTED RESULT:
+Lists 3x Test Books (With Binary Tree Positions)
+Returns Found Harry Potter Book
+Returns Book Not found (as expected)
+
+
+
+## RESULT (CORRECT):
+
+Bookstore Inventory
+==============================
+
+==============================
+Testing Binary Tree:
+==============================
+Added 'Harry Potter' as root of tree
+Added 'Animal Farm' to left of 'Harry Potter'
+Added 'The Great Gatsby' to right of 'Harry Potter'
+Books in alphabetical order (3 total):
+--------------------------------------------------
+  ID: 67890, Title: Animal Farm, Author: George Orwell
+  ID: 12345, Title: Harry Potter, Author: J.K. Rowling
+  ID: 23456, Title: The Great Gatsby, Author: F. Scott Fitzgerald
+--------------------------------------------------
+
+Testing book lookups:
+Found: ID: 12345, Title: Harry Potter, Author: J.K. Rowling
+Book not found (as expected)
+
