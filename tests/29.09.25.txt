@@ -73,3 +73,90 @@ Price: 34.99
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
+# TEST 18 - CHECKING EDIT BOOK FUNCTIONALITY - 22/09/2025
+
+## CODE ADDED:
+- Added Edit button, Load button, and Select ID field to create_add_book_frame()
+- Added load_book_for_edit() method to load existing book data
+- Added edit_book() method to update book details
+- Added _remove_from_tree() and _find_min() helper methods for tree updates
+- Updated clear_entries() to handle ID field state
+
+
+### Load Book for Editing
+## ACTION:
+1. Enter 12345 in "Select Book ID to Edit" field
+2. Click "Load Book" button
+
+## EXPECTED RESULT:
+- Success popup: "Book 'Harry Potter' loaded for editing"
+- All fields populated with Harry Potter's data
+- ID field becomes readonly (grayed out)
+- Console shows: [LOAD] Book loaded for editing
+
+## RESULT (CORRECT):
+- Success popup appeared
+- Fields show: ID=12345, Title=Harry Potter, Author=J.K. Rowling, Genre=Fantasy, Price=29.99 ✓
+- ID field is readonly/disabled
+- Console output correct
+
+
+
+
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////
+### TEST 19 - Edit Book Price Only
+1. Load book ID 12345
+2. Change price from 29.99 to 24.99
+3. Click "Edit Book" button
+
+## EXPECTED RESULT:
+- Success popup: "Book 'Harry Potter' updated successfully!"
+- View Books shows updated price
+- Fields clear after editing
+
+## RESULT (CORRECT):
+- Success message displayed
+- Price updated to $24.99 in display
+- All fields cleared
+
+
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////
+### TEST 20 - Edit Book Title
+1. Load book ID 67890 (Animal Farm)
+2. Change title to "Animal Farm: A Fairy Story"
+3. Click "Edit Book"
+
+## EXPECTED RESULT:
+- Success popup shows
+- Binary tree reorganizes (console message)
+- Book appears with new title
+
+## RESULT (CORRECT):
+- Success popup displayed
+- Console: [EDIT] Book title changed, reorganized in binary tree
+- New title displays correctly
+- Book still findable by ID 67890
+
+
+
+
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////
+### TEST 21 - Edit Multiple Fields
+1. Load book ID 23456
+2. Change: Author to "F.S. Fitzgerald", Genre to "Classic", Price to 22.99
+3. Click "Edit Book"
+
+## EXPECTED RESULT:
+- All fields update correctly
+- Changes persist in all data structures
+
+## RESULT (CORRECT):
+- All changes saved 
+- Hash table search returns updated book 
+- Linked list shows updated details
