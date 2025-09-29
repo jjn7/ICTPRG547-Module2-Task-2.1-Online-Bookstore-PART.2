@@ -1,0 +1,75 @@
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////
+# TEST 17 - CHECKING ADD BOOK FUNCTIONALITY - 22/09/2025
+
+## CODE ADDED TO __init__:
+        # Add the new Add Book frame after creating the text area
+        self.create_add_book_frame()
+
+## NEW METHODS ADDED:
+    def create_add_book_frame(self):
+        # Creates input fields for adding books
+        add_frame = tk.LabelFrame(self.root, text="Add New Book", padx=10, pady=10)
+        add_frame.pack(padx=10, pady=10, fill="x")
+        
+        # Book ID and Title inputs
+        tk.Label(add_frame, text="Book ID:").grid(row=0, column=0, sticky="w")
+        self.id_entry = tk.Entry(add_frame, width=15)
+        self.id_entry.grid(row=0, column=1, padx=5)
+        
+        tk.Label(add_frame, text="Title:").grid(row=0, column=2, sticky="w")
+        self.title_entry = tk.Entry(add_frame, width=30)
+        self.title_entry.grid(row=0, column=3, padx=5)
+        
+        # Author and Genre inputs
+        tk.Label(add_frame, text="Author:").grid(row=1, column=0, sticky="w")
+        self.author_entry = tk.Entry(add_frame, width=30)
+        self.author_entry.grid(row=1, column=1, padx=5)
+        
+        tk.Label(add_frame, text="Genre:").grid(row=1, column=2, sticky="w")
+        self.genre_entry = tk.Entry(add_frame, width=20)
+        self.genre_entry.grid(row=1, column=3, padx=5)
+        
+        # Price input and Add button
+        tk.Label(add_frame, text="Price:").grid(row=2, column=0, sticky="w")
+        self.price_entry = tk.Entry(add_frame, width=10)
+        self.price_entry.grid(row=2, column=1, padx=5)
+        
+        add_button = tk.Button(add_frame, text="Add Book", command=self.add_book, 
+                              bg="green", fg="white")
+        add_button.grid(row=2, column=3, padx=5, pady=5)
+
+    def add_book(self):
+        # Gets input and adds book to all data structures
+        
+    def clear_entries(self):
+        # Clears all input fields
+        
+    def show_message(self, title, message):
+        # Shows popup messages
+
+
+## INPUT:
+Book ID: 99999
+Title: Python Programming
+Author: John Smith
+Genre: Technology
+Price: 34.99
+
+## EXPECTED RESULT:
+- Success popup: "Book 'Python Programming' added successfully!"
+- Book appears in text area when View Books clicked
+- Input fields clear after adding
+- Console shows: [ADD] Book added: ID=99999, Title='Python Programming'
+
+## RESULT (CORRECT):
+- Success popup appeared
+- Book #4 shows in list after clicking View Books
+- All input fields cleared
+- Console output: [ADD] Book added: ID=99999, Title='Python Programming'
+
+
+
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////
