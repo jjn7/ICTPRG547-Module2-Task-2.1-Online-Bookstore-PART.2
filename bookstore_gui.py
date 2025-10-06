@@ -31,7 +31,17 @@ class BookstoreGUI:
         self.root.title("Online Bookstore Inventory System")
 
         # Set the window size (width x height in pixels)
-        self.root.geometry("800x700")  # Made taller for edit controls
+        self.root.geometry("900x750")
+
+        # Set background color
+        self.root.config(bg="#f5f5f5")
+
+        # Define color scheme
+        self.bg_color = "#f5f5f5"
+        self.frame_bg = "#ffffff"
+        self.button_bg = "#4a4a4a"
+        self.button_fg = "#ffffff"
+        self.accent_color = "#2c5f7d"
 
         # Initialize data structures from Part 1
         # These are the same structures I used in main.py
@@ -42,22 +52,37 @@ class BookstoreGUI:
         # Add some sample books
         self.load_sample_books()
 
-        # Add basic labels - no styling yet
-        welcome_label = tk.Label(self.root, text="Bookstore Inventory System")
-        welcome_label.pack()
+        # Header section
+        header_frame = tk.Frame(self.root, bg=self.accent_color)
+        header_frame.pack(fill="x", pady=(0, 15))
 
-        # Show book count to confirm data structures work
-        self.book_count_label = tk.Label(self.root, text=f"Books loaded: {self.inventory.size}")
-        self.book_count_label.pack()
+        welcome_label = tk.Label(header_frame, text="Bookstore Inventory System",
+                                font=("Arial", 16, "bold"), bg=self.accent_color, fg="white")
+        welcome_label.pack(pady=12)
 
-        # Add one simple button to view books
-        view_button = tk.Button(self.root, text="View Books", command=self.view_books)
-        view_button.pack()
+        # Book count label
+        self.book_count_label = tk.Label(self.root, text=f"Books loaded: {self.inventory.size}",
+                                        font=("Arial", 10), bg=self.bg_color)
+        self.book_count_label.pack(pady=(0, 8))
 
-        # Add basic text area to display book information
-        self.text_area = tk.Text(self.root, height=15, width=60)
-        self.text_area.pack()
-        
+        # View button
+        view_button = tk.Button(self.root, text="View Books", command=self.view_books,
+                               font=("Arial", 10), bg=self.button_bg, fg=self.button_fg,
+                               padx=20, pady=6, relief="flat", cursor="hand2")
+        view_button.pack(pady=(0, 10))
+
+        # Text area with frame
+        text_frame = tk.Frame(self.root, bg=self.bg_color)
+        text_frame.pack(padx=20, pady=(0, 10), fill="both", expand=True)
+
+        self.text_area = tk.Text(text_frame, height=15, width=80,
+                                font=("Courier New", 9), relief="solid",
+                                borderwidth=1, padx=10, pady=10)
+        self.text_area.pack(fill="both", expand=True)
+
+        # Show initial instructions
+        self.show_instructions()
+
         # Add the new Add/Edit Book frame after creating the text area
         self.create_add_book_frame()
 
@@ -123,90 +148,124 @@ class BookstoreGUI:
         Create a frame with input fields for adding and editing books
         Grid layout used
         """
-        
+
         # LabelFrame creates a bordered box with a title
-        add_frame = tk.LabelFrame(self.root, text="Add/Edit/Delete Book", padx=10, pady=10)
-        
+        add_frame = tk.LabelFrame(self.root, text="Add/Edit/Delete Book",
+                                 font=("Arial", 11, "bold"), padx=15, pady=15,
+                                 bg=self.frame_bg, relief="solid", borderwidth=1)
+
         # pack() places the frame on the window
         # fill="x" makes it stretch horizontally
-        add_frame.pack(padx=10, pady=10, fill="x")
+        add_frame.pack(padx=20, pady=(0, 20), fill="x")
         
         # Using grid layout to arrange input fields in rows and columns
-        
-        # ROW 0: Book ID and Title
-        tk.Label(add_frame, text="Book ID:").grid(row=0, column=0, sticky="w")
-        
-        # References to Entry widgets to get their values later
-        self.id_entry = tk.Entry(add_frame, width=15)
-        self.id_entry.grid(row=0, column=1, padx=5)
-        
-        tk.Label(add_frame, text="Title:").grid(row=0, column=2, sticky="w")
-        self.title_entry = tk.Entry(add_frame, width=30)
-        self.title_entry.grid(row=0, column=3, padx=5)
-        
-        # ROW 1: Author and Genre
-        tk.Label(add_frame, text="Author:").grid(row=1, column=0, sticky="w")
-        self.author_entry = tk.Entry(add_frame, width=30)
-        self.author_entry.grid(row=1, column=1, padx=5)
-        
-        tk.Label(add_frame, text="Genre:").grid(row=1, column=2, sticky="w")
-        self.genre_entry = tk.Entry(add_frame, width=20)
-        self.genre_entry.grid(row=1, column=3, padx=5)
-        
-        # ROW 2: Price and Cover Image
-        tk.Label(add_frame, text="Price:").grid(row=2, column=0, sticky="w")
-        self.price_entry = tk.Entry(add_frame, width=10)
-        self.price_entry.grid(row=2, column=1, padx=5)
+        # Configure column weights for proper stretching
+        add_frame.columnconfigure(1, weight=1)
+        add_frame.columnconfigure(3, weight=1)
 
-        tk.Label(add_frame, text="Cover Image:").grid(row=2, column=2, sticky="w")
+        # ROW 0: Book ID and Title
+        tk.Label(add_frame, text="Book ID: *", font=("Arial", 9), bg=self.frame_bg).grid(row=0, column=0, sticky="w", pady=6)
+
+        # References to Entry widgets to get their values later
+        self.id_entry = tk.Entry(add_frame, font=("Arial", 9), relief="solid", borderwidth=1)
+        self.id_entry.grid(row=0, column=1, padx=5, pady=6, sticky="ew")
+
+        tk.Label(add_frame, text="Title: *", font=("Arial", 9), bg=self.frame_bg).grid(row=0, column=2, sticky="w", padx=(15, 0), pady=6)
+        self.title_entry = tk.Entry(add_frame, font=("Arial", 9), relief="solid", borderwidth=1)
+        self.title_entry.grid(row=0, column=3, padx=5, pady=6, sticky="ew")
+
+        # ROW 1: Author and Genre
+        tk.Label(add_frame, text="Author: *", font=("Arial", 9), bg=self.frame_bg).grid(row=1, column=0, sticky="w", pady=6)
+        self.author_entry = tk.Entry(add_frame, font=("Arial", 9), relief="solid", borderwidth=1)
+        self.author_entry.grid(row=1, column=1, padx=5, pady=6, sticky="ew")
+
+        tk.Label(add_frame, text="Genre: *", font=("Arial", 9), bg=self.frame_bg).grid(row=1, column=2, sticky="w", padx=(15, 0), pady=6)
+        self.genre_entry = tk.Entry(add_frame, font=("Arial", 9), relief="solid", borderwidth=1)
+        self.genre_entry.grid(row=1, column=3, padx=5, pady=6, sticky="ew")
+
+        # ROW 2: Price and Cover Image
+        tk.Label(add_frame, text="Price: *", font=("Arial", 9), bg=self.frame_bg).grid(row=2, column=0, sticky="w", pady=6)
+        self.price_entry = tk.Entry(add_frame, font=("Arial", 9), relief="solid", borderwidth=1)
+        self.price_entry.grid(row=2, column=1, padx=5, pady=6, sticky="ew")
+
+        tk.Label(add_frame, text="Cover Image:", font=("Arial", 9), bg=self.frame_bg).grid(row=2, column=2, sticky="w", padx=(15, 0), pady=6)
 
         # Frame to hold image path entry and browse button together
-        image_frame = tk.Frame(add_frame)
-        image_frame.grid(row=2, column=3, sticky="w")
+        image_frame = tk.Frame(add_frame, bg=self.frame_bg)
+        image_frame.grid(row=2, column=3, sticky="ew", pady=6, padx=5)
 
-        self.image_entry = tk.Entry(image_frame, width=25)
-        self.image_entry.pack(side="left", padx=(0, 5))
+        self.image_entry = tk.Entry(image_frame, font=("Arial", 9), relief="solid", borderwidth=1)
+        self.image_entry.pack(side="left", fill="x", expand=True, padx=(0, 5))
 
         # Browse button to open file dialog
         browse_button = tk.Button(image_frame, text="Browse...", command=self.browse_image,
-                                 bg="lightgray", fg="black")
+                                 font=("Arial", 8), bg="#e0e0e0", fg="black",
+                                 relief="flat", cursor="hand2", padx=8, pady=2)
         browse_button.pack(side="left")
 
-        # ROW 2.5: Action Buttons
-        # Edit button - yellow color
-        edit_button = tk.Button(add_frame, text="Edit Book", command=self.edit_book,
-                               bg="yellow", fg="black")
-        edit_button.grid(row=3, column=0, padx=5, pady=5)
-
-        # Button that calls add_book method when clicked
+        # ROW 3: Action Buttons
         add_button = tk.Button(add_frame, text="Add Book", command=self.add_book,
-                              bg="green", fg="white")
-        add_button.grid(row=3, column=1, padx=5, pady=5)
-        
+                              font=("Arial", 9), bg=self.button_bg, fg=self.button_fg,
+                              relief="flat", cursor="hand2", padx=12, pady=6)
+        add_button.grid(row=3, column=0, padx=5, pady=10, sticky="ew")
+
+        edit_button = tk.Button(add_frame, text="Edit Book", command=self.edit_book,
+                               font=("Arial", 9), bg=self.button_bg, fg=self.button_fg,
+                               relief="flat", cursor="hand2", padx=12, pady=6)
+        edit_button.grid(row=3, column=1, padx=5, pady=10, sticky="ew")
+
         # ROW 4: Select and Load for editing
-        tk.Label(add_frame, text="Select Book ID to Edit:").grid(row=4, column=0, sticky="w")
-        self.select_id_entry = tk.Entry(add_frame, width=15)
-        self.select_id_entry.grid(row=4, column=1, padx=5)
+        tk.Label(add_frame, text="Select Book ID to Edit:", font=("Arial", 9), bg=self.frame_bg).grid(row=4, column=0, sticky="w", pady=6)
+        self.select_id_entry = tk.Entry(add_frame, font=("Arial", 9), relief="solid", borderwidth=1)
+        self.select_id_entry.grid(row=4, column=1, padx=5, pady=6, sticky="ew")
 
         # Load button to populate fields with selected book's data
         load_button = tk.Button(add_frame, text="Load Book", command=self.load_book_for_edit,
-                               bg="lightblue", fg="black")
-        load_button.grid(row=4, column=2, padx=5, pady=5)
+                               font=("Arial", 9), bg=self.button_bg, fg=self.button_fg,
+                               relief="flat", cursor="hand2", padx=12, pady=6)
+        load_button.grid(row=4, column=2, padx=5, pady=6, sticky="ew")
 
         # ROW 5: Delete Book Section
-        tk.Label(add_frame, text="Delete Book by ID:").grid(row=5, column=0, sticky="w")
-        self.delete_id_entry = tk.Entry(add_frame, width=15)
-        self.delete_id_entry.grid(row=5, column=1, padx=5)
+        tk.Label(add_frame, text="Delete Book by ID:", font=("Arial", 9), bg=self.frame_bg).grid(row=5, column=0, sticky="w", pady=6)
+        self.delete_id_entry = tk.Entry(add_frame, font=("Arial", 9), relief="solid", borderwidth=1)
+        self.delete_id_entry.grid(row=5, column=1, padx=5, pady=6, sticky="ew")
 
-        # Delete button - red
+        # Delete button
         delete_button = tk.Button(add_frame, text="Delete Book", command=self.confirm_delete,
-                                bg="red", fg="white")
-        delete_button.grid(row=5, column=2, padx=5, pady=5)
+                                font=("Arial", 9), bg="#8b4545", fg="white",
+                                relief="flat", cursor="hand2", padx=12, pady=6)
+        delete_button.grid(row=5, column=2, padx=5, pady=6, sticky="ew")
 
         # Clear All button
         clear_all_button = tk.Button(add_frame, text="Clear All Fields", command=self.clear_all_fields,
-                                    bg="gray", fg="white")
-        clear_all_button.grid(row=5, column=3, padx=5, pady=5)
+                                    font=("Arial", 9), bg="#6b6b6b", fg="white",
+                                    relief="flat", cursor="hand2", padx=12, pady=6)
+        clear_all_button.grid(row=5, column=3, padx=5, pady=6, sticky="ew")
+
+        # Add required field note
+        tk.Label(add_frame, text="* Required field", font=("Arial", 8, "italic"),
+                bg=self.frame_bg, fg="#666666").grid(row=6, column=0, columnspan=4, sticky="w", pady=(5, 0))
+
+    def show_instructions(self):
+        """
+        Display initial instructions in the text area
+        """
+        instructions = """Welcome to the Bookstore Inventory System
+
+Getting Started:
+
+  1. View Books - Click the 'View Books' button to see all books in inventory
+
+  2. Add a Book - Fill in the required fields (*) and click 'Add Book'
+
+  3. Edit a Book - Enter a Book ID in 'Select Book ID to Edit', click 'Load Book',
+     make your changes, then click 'Edit Book'
+
+  4. Delete a Book - Enter a Book ID in 'Delete Book by ID' and click 'Delete Book'
+
+Note: Fields marked with * are required
+"""
+        self.text_area.insert(tk.END, instructions)
 
     def add_book(self):
         """
@@ -492,16 +551,20 @@ class BookstoreGUI:
         # Create a new window on top of the main window
         popup = tk.Toplevel(self.root)
         popup.title(title)
-        popup.geometry("300x100")
-        
+        popup.geometry("350x120")
+        popup.config(bg=self.frame_bg)
+
         # Add message text
-        label = tk.Label(popup, text=message, wraplength=250)
+        label = tk.Label(popup, text=message, wraplength=300,
+                        font=("Arial", 9), bg=self.frame_bg)
         label.pack(pady=20)
-        
+
         # Add OK button to close the popup
-        ok_button = tk.Button(popup, text="OK", command=popup.destroy)
+        ok_button = tk.Button(popup, text="OK", command=popup.destroy,
+                             font=("Arial", 9), bg=self.button_bg, fg=self.button_fg,
+                             relief="flat", cursor="hand2", padx=20, pady=6)
         ok_button.pack()
-        
+
         # Make it modal (must be closed before using main window)
         popup.transient(self.root)
         popup.grab_set()
@@ -523,49 +586,53 @@ class BookstoreGUI:
         try:
             # Get the book ID to delete
             book_id = int(self.delete_id_entry.get())
-        
+
             # check if the book exists using hash table
             book = self.quick_lookup.find_book(book_id)
-        
+
             if book is None:
                 self.show_message("Error", f"No book found with ID {book_id}")
                 return
-        
+
             # Create confirmation dialog
             confirmation_popup = tk.Toplevel(self.root)
             confirmation_popup.title("Confirm Deletion")
-            confirmation_popup.geometry("400x150")
-        
+            confirmation_popup.geometry("420x170")
+            confirmation_popup.config(bg=self.frame_bg)
+
             # Warning message with book details
             warning_text = f"Are you sure you want to delete this book?\n\n"
             warning_text += f"ID: {book.book_id}\n"
             warning_text += f"Title: {book.title}\n"
             warning_text += f"Author: {book.author}\n\n"
             warning_text += "This action cannot be undone!"
-        
-            label = tk.Label(confirmation_popup, text=warning_text, justify="left")
-            label.pack(pady=10)
-        
+
+            label = tk.Label(confirmation_popup, text=warning_text, justify="left",
+                           font=("Arial", 9), bg=self.frame_bg)
+            label.pack(pady=15)
+
             # Button frame for Yes/No buttons
-            button_frame = tk.Frame(confirmation_popup)
+            button_frame = tk.Frame(confirmation_popup, bg=self.frame_bg)
             button_frame.pack(pady=10)
-        
+
             # Yes button
-            yes_button = tk.Button(button_frame, text="Yes, Delete", 
+            yes_button = tk.Button(button_frame, text="Yes, Delete",
                                 command=lambda: self.delete_book(book_id, confirmation_popup),
-                                bg="red", fg="white", width=12)
+                                font=("Arial", 9), bg="#8b4545", fg="white",
+                                relief="flat", cursor="hand2", padx=15, pady=6, width=12)
             yes_button.pack(side="left", padx=5)
-        
+
             # No button - cancel deletion
-            no_button = tk.Button(button_frame, text="Cancel", 
+            no_button = tk.Button(button_frame, text="Cancel",
                                 command=confirmation_popup.destroy,
-                                bg="gray", fg="white", width=12)
+                                font=("Arial", 9), bg=self.button_bg, fg="white",
+                                relief="flat", cursor="hand2", padx=15, pady=6, width=12)
             no_button.pack(side="left", padx=5)
-        
+
             # Make it modal
             confirmation_popup.transient(self.root)
             confirmation_popup.grab_set()
-        
+
         except ValueError:
             self.show_message("Error", "Please enter a valid book ID number")
             print(f"[ERROR] Invalid ID")
