@@ -1,14 +1,15 @@
 class Book:
     # __init__ is the constructor - runs when we create a new book
     # self refers to the specific book object being created
-    def __init__(self, book_id, title, author, genre, price, in_stock=True):
+    def __init__(self, book_id, title, author, genre, price, in_stock=True, image_path=None):
         # Store the data passed in as properties of this book object
         self.id = book_id           # Unique identifier
         self.title = title
-        self.author = author        
+        self.author = author
         self.genre = genre
         self.price = price
         self.in_stock = in_stock    #defaults to True
+        self.image_path = image_path  # Optional path to cover image file
     
     # __str__ defines what happens when we print() a book object
     def __str__(self):

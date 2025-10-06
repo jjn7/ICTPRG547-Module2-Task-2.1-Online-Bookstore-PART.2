@@ -156,3 +156,143 @@ Total books: 3 (The Great Gatsby, Test Book A, Test Book B)
 - No gaps or broken connections in list traversal
 - Hash table search for ID 23456 returns None (properly removed)
 - Binary tree no longer contains "The Great Gatsby" entry
+
+
+
+
+
+
+
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////
+# TEST 27 - ADD BOOK WITH VALID IMAGE - 06/10/2025
+
+## SETUP:
+Created test image: test_cover.png (200x300 blue PNG)
+
+## ACTION:
+1. Fill in book details:
+   - ID: 55555
+   - Title: Test Book With Cover
+   - Author: Test Author
+   - Genre: Fiction
+   - Price: 19.99
+   - Cover Image: test_cover.png
+2. Click "Add Book"
+
+## EXPECTED RESULT:
+- Image validates successfully using Pillow
+- Book added with image path stored
+- Console shows: [INFO] Image validated: Valid PNG image (200x300)
+- Success popup appears
+
+## RESULT (CORRECT):
+- Pillow successfully validated the image file
+- Validation returned: True, "Valid PNG image (200x300)"
+- Image format detected as PNG
+- Book can be added with image path stored in book.image_path
+- Console output: [INFO] Image validated: Valid PNG image (200x300)
+
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////
+# TEST 28 - ADD BOOK WITH INVALID IMAGE PATH - 06/10/2025
+
+## ACTION:
+1. Fill in book details:
+   - ID: 66666
+   - Title: Test Book Invalid Image
+   - Author: Test Author
+   - Genre: Fiction
+   - Price: 19.99
+   - Cover Image: nonexistent.png
+2. Click "Add Book"
+
+## EXPECTED RESULT:
+- Image validation fails
+- Error popup: "Image validation failed: Image file not found: nonexistent.png"
+- Book is NOT added to inventory
+- Console shows: [ERROR] Image validation
+
+## RESULT (CORRECT):
+- Validation failed as expected
+- Pillow validation returned: False, "Image file not found: nonexistent.png"
+- Error popup displays: "Image validation failed: Image file not found: nonexistent.png"
+- Book is NOT added to inventory (validation stops the process)
+- Console output: [ERROR] Image validation: Image file not found: nonexistent.png
+- File existence check works correctly before attempting to open with Pillow
+
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////
+# TEST 29 - ADD BOOK WITH NON-IMAGE FILE - 06/10/2025
+
+## ACTION:
+1. Fill in book details:
+   - ID: 77777
+   - Title: Test Book Wrong File Type
+   - Author: Test Author
+   - Genre: Fiction
+   - Price: 19.99
+   - Cover Image: requirements.txt
+2. Click "Add Book"
+
+## EXPECTED RESULT:
+- Pillow detects file is not a valid image
+- Error popup showing validation failure
+- Book is NOT added
+
+## RESULT (CORRECT):
+- Pillow's Image.open() detected the file is not a valid image
+- Validation returned: False, "Invalid image file: cannot identify image file..."
+- Error popup displays validation failure with full error message
+- Book is NOT added to inventory
+- Console output: [ERROR] Image validation: Invalid image file: cannot identify image file
+- Demonstrates Pillow's built-in format detection working properly
+
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////
+# TEST 30 - ADD BOOK WITHOUT IMAGE (OPTIONAL FIELD) - 06/10/2025
+
+## ACTION:
+1. Fill in book details:
+   - ID: 88888
+   - Title: Test Book No Image
+   - Author: Test Author
+   - Genre: Fiction
+   - Price: 19.99
+   - Cover Image: (leave blank)
+2. Click "Add Book"
+
+## EXPECTED RESULT:
+- Book added successfully without image
+- No validation error since image is optional
+- Book's image_path is None
+
+## RESULT (CORRECT):
+- Validation returned: True, "No image provided"
+- No error occurs - image field is truly optional
+- Book added successfully to all data structures
+- Book's image_path attribute is None
+- Success popup appears normally
+- Console shows book added without any image validation errors
+- Demonstrates proper handling of optional fields
+
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////
+# SUMMARY OF PILLOW INTEGRATION:
+
+The Pillow library is now integrated into my bookstore application to handle
+book cover images. This demonstrates:
+
+1. Installing external libraries (pip install)
+2. Creating utility modules that use external libraries
+3. Importing and using library functions
+4. Proper error handling with library operations
+5. Optional feature integration (image is not required)
+
+The integration is simple and practical - just basic image validation.
+Nothing complicated, just showing I understand how to use an external library.

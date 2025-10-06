@@ -2,12 +2,16 @@
 
 # Import tkinter - Python's built-in GUI library
 import tkinter as tk
+from tkinter import filedialog  # For file browser dialog
 
 # Import my classes from Part 1
 from models.book import Book
 from data_structures.linked_list import DoubleLinkedList
 from data_structures.hash_table import HashTable
 from data_structures.binary_tree import BinaryTree
+
+# Import my image validation utility (uses Pillow library)
+from utils.image_validator import validate_image
 
 class BookstoreGUI:
     """
@@ -149,51 +153,66 @@ class BookstoreGUI:
         self.genre_entry = tk.Entry(add_frame, width=20)
         self.genre_entry.grid(row=1, column=3, padx=5)
         
-        # ROW 2: Price and Action Buttons
+        # ROW 2: Price and Cover Image
         tk.Label(add_frame, text="Price:").grid(row=2, column=0, sticky="w")
         self.price_entry = tk.Entry(add_frame, width=10)
         self.price_entry.grid(row=2, column=1, padx=5)
-        
+
+        tk.Label(add_frame, text="Cover Image:").grid(row=2, column=2, sticky="w")
+
+        # Frame to hold image path entry and browse button together
+        image_frame = tk.Frame(add_frame)
+        image_frame.grid(row=2, column=3, sticky="w")
+
+        self.image_entry = tk.Entry(image_frame, width=25)
+        self.image_entry.pack(side="left", padx=(0, 5))
+
+        # Browse button to open file dialog
+        browse_button = tk.Button(image_frame, text="Browse...", command=self.browse_image,
+                                 bg="lightgray", fg="black")
+        browse_button.pack(side="left")
+
+        # ROW 2.5: Action Buttons
         # Edit button - yellow color
         edit_button = tk.Button(add_frame, text="Edit Book", command=self.edit_book,
                                bg="yellow", fg="black")
-        edit_button.grid(row=2, column=2, padx=5, pady=5)
-        
+        edit_button.grid(row=3, column=0, padx=5, pady=5)
+
         # Button that calls add_book method when clicked
-        add_button = tk.Button(add_frame, text="Add Book", command=self.add_book, 
+        add_button = tk.Button(add_frame, text="Add Book", command=self.add_book,
                               bg="green", fg="white")
-        add_button.grid(row=2, column=3, padx=5, pady=5)
+        add_button.grid(row=3, column=1, padx=5, pady=5)
         
-        # ROW 3: Select and Load for editing
-        tk.Label(add_frame, text="Select Book ID to Edit:").grid(row=3, column=0, sticky="w")
+        # ROW 4: Select and Load for editing
+        tk.Label(add_frame, text="Select Book ID to Edit:").grid(row=4, column=0, sticky="w")
         self.select_id_entry = tk.Entry(add_frame, width=15)
-        self.select_id_entry.grid(row=3, column=1, padx=5)
-        
+        self.select_id_entry.grid(row=4, column=1, padx=5)
+
         # Load button to populate fields with selected book's data
         load_button = tk.Button(add_frame, text="Load Book", command=self.load_book_for_edit,
                                bg="lightblue", fg="black")
-        load_button.grid(row=3, column=2, padx=5, pady=5)
+        load_button.grid(row=4, column=2, padx=5, pady=5)
 
-        # ROW 4: Delete Book Section
-        tk.Label(add_frame, text="Delete Book by ID:").grid(row=4, column=0, sticky="w")
+        # ROW 5: Delete Book Section
+        tk.Label(add_frame, text="Delete Book by ID:").grid(row=5, column=0, sticky="w")
         self.delete_id_entry = tk.Entry(add_frame, width=15)
-        self.delete_id_entry.grid(row=4, column=1, padx=5)
+        self.delete_id_entry.grid(row=5, column=1, padx=5)
 
         # Delete button - red
         delete_button = tk.Button(add_frame, text="Delete Book", command=self.confirm_delete,
                                 bg="red", fg="white")
-        delete_button.grid(row=4, column=2, padx=5, pady=5)
+        delete_button.grid(row=5, column=2, padx=5, pady=5)
 
         # Clear All button
         clear_all_button = tk.Button(add_frame, text="Clear All Fields", command=self.clear_all_fields,
                                     bg="gray", fg="white")
-        clear_all_button.grid(row=4, column=3, padx=5, pady=5)
+        clear_all_button.grid(row=5, column=3, padx=5, pady=5)
 
     def add_book(self):
         """
         Add a new book to all data structures
         """
-        
+
         # Using try/except to handle potential errors (like invalid numbers)
         try:
             # Get values from my input fields
@@ -202,40 +221,53 @@ class BookstoreGUI:
             author = self.author_entry.get().strip()
             genre = self.genre_entry.get().strip()
             price = float(self.price_entry.get())
-            
+            image_path = self.image_entry.get().strip()
+
             # Validate that all fields are filled
             if not title or not author or not genre:
                 self.show_message("Error", "Please fill in all fields")
                 return
-            
+
             # Check price is valid
             if price < 0:
                 self.show_message("Error", "Price cannot be negative")
                 return
-            
+
+            # Validate cover image if provided (using Pillow library)
+            if image_path:
+                is_valid, message = validate_image(image_path)
+                if not is_valid:
+                    self.show_message("Error", f"Image validation failed: {message}")
+                    print(f"[ERROR] Image validation: {message}")
+                    return
+                else:
+                    print(f"[INFO] Image validated: {message}")
+
             # Check if book ID already exists using my hash table
             if self.quick_lookup.find_book(book_id):
                 self.show_message("Error", f"Book with ID {book_id} already exists")
                 return
-            
-            # Create new book object
-            new_book = Book(book_id, title, author, genre, price)
-            
+
+            # Create new book object with optional image path
+            new_book = Book(book_id, title, author, genre, price, image_path=image_path if image_path else None)
+
             # Add to all three data structures
             self.inventory.add_book(new_book)
             self.quick_lookup.add_book(new_book)
             self.tree_lookup.add_book(new_book)
-            
+
             # Update the GUI
             self.clear_entries()
             self.view_books()
-            
+
             # Show success message
             self.show_message("Success", f"Book '{title}' added successfully!")
-            
+
             # Log for testing/debugging
             print(f"[ADD] Book added: ID={book_id}, Title='{title}'")
-            
+            if image_path:
+                print(f"[ADD] Cover image: {image_path}")
+
         except ValueError as e:
             # This catches errors when converting to int or float
             self.show_message("Error", "Invalid input. Check ID and Price is a number")
@@ -260,7 +292,7 @@ class BookstoreGUI:
             
             # Clear all fields first
             self.clear_entries()
-            
+
             # Populate fields with the book's current data
             # This allows the user to see current values and change what they need
             self.id_entry.insert(0, str(book.book_id))
@@ -268,6 +300,10 @@ class BookstoreGUI:
             self.author_entry.insert(0, book.author)
             self.genre_entry.insert(0, book.genre)
             self.price_entry.insert(0, str(book.price))
+
+            # Load image path if it exists
+            if book.image_path:
+                self.image_entry.insert(0, book.image_path)
             
             # Disable the ID field since we shouldn't change IDs
             # This prevents creating duplicate IDs
@@ -293,40 +329,52 @@ class BookstoreGUI:
             if str(self.id_entry.cget('state')) != 'readonly':
                 self.show_message("Error", "Please load a book first using the Load Book button")
                 return
-            
+
             # Get the values from input fields
             book_id = int(self.id_entry.get())
             new_title = self.title_entry.get().strip()
             new_author = self.author_entry.get().strip()
             new_genre = self.genre_entry.get().strip()
             new_price = float(self.price_entry.get())
-            
+            new_image_path = self.image_entry.get().strip()
+
             # Validate inputs
             if not new_title or not new_author or not new_genre:
                 self.show_message("Error", "Please fill in all fields")
                 return
-            
+
             if new_price < 0:
                 self.show_message("Error", "Price cannot be negative")
                 return
-            
+
+            # Validate cover image if provided (using Pillow library)
+            if new_image_path:
+                is_valid, message = validate_image(new_image_path)
+                if not is_valid:
+                    self.show_message("Error", f"Image validation failed: {message}")
+                    print(f"[ERROR] Image validation: {message}")
+                    return
+                else:
+                    print(f"[INFO] Image validated: {message}")
+
             # Find the existing book in hash table
             old_book = self.quick_lookup.find_book(book_id)
-            
+
             if old_book is None:
                 self.show_message("Error", "Book no longer exists in inventory")
                 return
-            
+
             # Store old title for binary tree update (since tree is sorted by title)
             old_title = old_book.title
-            
+
             # Update the book object with new values
             # updating the object updates it everywhere
             old_book.title = new_title
             old_book.author = new_author
             old_book.genre = new_genre
             old_book.price = new_price
-            
+            old_book.image_path = new_image_path if new_image_path else None
+
             # Special handling for binary tree if title changed
             # Tree needs reorganising if the sort key (title) changed
             if old_title != new_title:
@@ -335,23 +383,25 @@ class BookstoreGUI:
                 self.tree_lookup.root = self._remove_from_tree(self.tree_lookup.root, old_title)
                 self.tree_lookup.add_book(old_book)
                 print(f"[EDIT] Book title changed, reorganized in binary tree")
-            
+
             # Clear the selection and input fields
             self.clear_entries()
             self.select_id_entry.delete(0, tk.END)
-            
+
             # Re-enable the ID field for next operation
             self.id_entry.config(state='normal')
-            
+
             # Refresh the display
             self.view_books()
-            
+
             # Show success message
             self.show_message("Success", f"Book '{new_title}' updated successfully!")
-            
+
             # Log for testing
             print(f"[EDIT] Book updated: ID={book_id}, New Title='{new_title}'")
-            
+            if new_image_path:
+                print(f"[EDIT] Cover image: {new_image_path}")
+
         except ValueError as e:
             self.show_message("Error", "Invalid input. Please check ID and Price are numbers")
             print(f"[ERROR] Failed to edit book: {e}")
@@ -398,18 +448,42 @@ class BookstoreGUI:
             current = current.left
         return current
 
+    def browse_image(self):
+        """
+        Open a file browser dialog to select an image file
+        Automatically populates the image_entry field with the selected path
+        """
+        # Open file dialog - only show image files
+        file_path = filedialog.askopenfilename(
+            title="Select Book Cover Image",
+            filetypes=[
+                ("Image files", "*.png *.jpg *.jpeg *.gif *.bmp"),
+                ("PNG files", "*.png"),
+                ("JPEG files", "*.jpg *.jpeg"),
+                ("All files", "*.*")
+            ]
+        )
+
+        # If user selected a file (didn't cancel)
+        if file_path:
+            # Clear current entry and insert the selected path
+            self.image_entry.delete(0, tk.END)
+            self.image_entry.insert(0, file_path)
+            print(f"[BROWSE] Image selected: {file_path}")
+
     def clear_entries(self):
         """
         Clear all entry fields and reset ID field state
         """
         # Make sure ID field is editable before clearing
         self.id_entry.config(state='normal')
-        
+
         self.id_entry.delete(0, tk.END)
         self.title_entry.delete(0, tk.END)
         self.author_entry.delete(0, tk.END)
         self.genre_entry.delete(0, tk.END)
         self.price_entry.delete(0, tk.END)
+        self.image_entry.delete(0, tk.END)
 
     def show_message(self, title, message):
         """
