@@ -3,7 +3,8 @@ class Book:
     # self refers to the specific book object being created
     def __init__(self, book_id, title, author, genre, price, in_stock=True, image_path=None):
         # Store the data passed in as properties of this book object
-        self.id = book_id           # Unique identifier
+        self.book_id = book_id      # Unique identifier
+        self.id = book_id           # Keep both for compatibility
         self.title = title
         self.author = author
         self.genre = genre

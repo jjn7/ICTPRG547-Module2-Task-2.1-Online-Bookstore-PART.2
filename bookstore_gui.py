@@ -65,11 +65,21 @@ class BookstoreGUI:
                                         font=("Arial", 10), bg=self.bg_color)
         self.book_count_label.pack(pady=(0, 8))
 
-        # View button
-        view_button = tk.Button(self.root, text="View Books", command=self.view_books,
+        # Button frame to hold View Books and Show Instructions buttons
+        button_frame = tk.Frame(self.root, bg=self.bg_color)
+        button_frame.pack(pady=(0, 10))
+
+        # View Books button
+        view_button = tk.Button(button_frame, text="View Books", command=self.view_books,
                                font=("Arial", 10), bg=self.button_bg, fg=self.button_fg,
                                padx=20, pady=6, relief="flat", cursor="hand2")
-        view_button.pack(pady=(0, 10))
+        view_button.pack(side="left", padx=5)
+
+        # Show Instructions button
+        instructions_button = tk.Button(button_frame, text="Show Instructions", command=self.show_instructions,
+                                       font=("Arial", 10), bg=self.button_bg, fg=self.button_fg,
+                                       padx=20, pady=6, relief="flat", cursor="hand2")
+        instructions_button.pack(side="left", padx=5)
 
         # Text area with frame
         text_frame = tk.Frame(self.root, bg=self.bg_color)
@@ -114,6 +124,7 @@ class BookstoreGUI:
         """
         Display all books from the linked list in the text area
         This is called when the View Books button is clicked
+        Now displays book cover images alongside the book details
         """
         # Clear the text area first
         self.text_area.delete(1.0, tk.END)
@@ -129,9 +140,25 @@ class BookstoreGUI:
         current_node = self.inventory.head
         book_number = 1
 
+        # Store image references so they don't get garbage collected
+        # This is important - tkinter needs to keep the images in memory
+        if not hasattr(self, 'current_images'):
+            self.current_images = []
+        self.current_images.clear()
+
         while current_node is not None:
             book = current_node.data
-            # Display basic book information
+
+            # Try to load and display the cover image if available
+            if book.image_path:
+                photo = self.load_book_image(book.image_path)
+                if photo:
+                    # Insert the image into the text area
+                    self.text_area.image_create(tk.END, image=photo)
+                    self.current_images.append(photo)  # Keep reference so it displays
+                    self.text_area.insert(tk.END, "  ")  # Add space after image
+
+            # Display basic book information next to the image
             book_info = f"{book_number}. {book}\n"
             book_info += f"   Genre: {book.genre}, Price: ${book.price}\n\n"
 
@@ -139,7 +166,7 @@ class BookstoreGUI:
 
             current_node = current_node.next
             book_number += 1
-        
+
         # Update book count label
         self.book_count_label.config(text=f"Books loaded: {self.inventory.size}")
 
@@ -150,49 +177,54 @@ class BookstoreGUI:
         """
 
         # LabelFrame creates a bordered box with a title
-        add_frame = tk.LabelFrame(self.root, text="Add/Edit/Delete Book",
+        add_frame = tk.LabelFrame(self.root, text="Book Management",
                                  font=("Arial", 11, "bold"), padx=15, pady=15,
                                  bg=self.frame_bg, relief="solid", borderwidth=1)
 
         # pack() places the frame on the window
         # fill="x" makes it stretch horizontally
         add_frame.pack(padx=20, pady=(0, 20), fill="x")
-        
+
         # Using grid layout to arrange input fields in rows and columns
         # Configure column weights for proper stretching
         add_frame.columnconfigure(1, weight=1)
         add_frame.columnconfigure(3, weight=1)
 
-        # ROW 0: Book ID and Title
-        tk.Label(add_frame, text="Book ID: *", font=("Arial", 9), bg=self.frame_bg).grid(row=0, column=0, sticky="w", pady=6)
+        # Section heading for book details
+        section_label = tk.Label(add_frame, text="Book Details",
+                                font=("Arial", 9, "bold"), bg=self.frame_bg)
+        section_label.grid(row=0, column=0, columnspan=4, sticky="w", pady=(0, 8))
+
+        # ROW 1: Book ID and Title
+        tk.Label(add_frame, text="Book ID: *", font=("Arial", 9), bg=self.frame_bg).grid(row=1, column=0, sticky="w", pady=6)
 
         # References to Entry widgets to get their values later
         self.id_entry = tk.Entry(add_frame, font=("Arial", 9), relief="solid", borderwidth=1)
-        self.id_entry.grid(row=0, column=1, padx=5, pady=6, sticky="ew")
+        self.id_entry.grid(row=1, column=1, padx=5, pady=6, sticky="ew")
 
-        tk.Label(add_frame, text="Title: *", font=("Arial", 9), bg=self.frame_bg).grid(row=0, column=2, sticky="w", padx=(15, 0), pady=6)
+        tk.Label(add_frame, text="Title: *", font=("Arial", 9), bg=self.frame_bg).grid(row=1, column=2, sticky="w", padx=(15, 0), pady=6)
         self.title_entry = tk.Entry(add_frame, font=("Arial", 9), relief="solid", borderwidth=1)
-        self.title_entry.grid(row=0, column=3, padx=5, pady=6, sticky="ew")
+        self.title_entry.grid(row=1, column=3, padx=5, pady=6, sticky="ew")
 
-        # ROW 1: Author and Genre
-        tk.Label(add_frame, text="Author: *", font=("Arial", 9), bg=self.frame_bg).grid(row=1, column=0, sticky="w", pady=6)
+        # ROW 2: Author and Genre
+        tk.Label(add_frame, text="Author: *", font=("Arial", 9), bg=self.frame_bg).grid(row=2, column=0, sticky="w", pady=6)
         self.author_entry = tk.Entry(add_frame, font=("Arial", 9), relief="solid", borderwidth=1)
-        self.author_entry.grid(row=1, column=1, padx=5, pady=6, sticky="ew")
+        self.author_entry.grid(row=2, column=1, padx=5, pady=6, sticky="ew")
 
-        tk.Label(add_frame, text="Genre: *", font=("Arial", 9), bg=self.frame_bg).grid(row=1, column=2, sticky="w", padx=(15, 0), pady=6)
+        tk.Label(add_frame, text="Genre: *", font=("Arial", 9), bg=self.frame_bg).grid(row=2, column=2, sticky="w", padx=(15, 0), pady=6)
         self.genre_entry = tk.Entry(add_frame, font=("Arial", 9), relief="solid", borderwidth=1)
-        self.genre_entry.grid(row=1, column=3, padx=5, pady=6, sticky="ew")
+        self.genre_entry.grid(row=2, column=3, padx=5, pady=6, sticky="ew")
 
-        # ROW 2: Price and Cover Image
-        tk.Label(add_frame, text="Price: *", font=("Arial", 9), bg=self.frame_bg).grid(row=2, column=0, sticky="w", pady=6)
+        # ROW 3: Price and Cover Image
+        tk.Label(add_frame, text="Price: *", font=("Arial", 9), bg=self.frame_bg).grid(row=3, column=0, sticky="w", pady=6)
         self.price_entry = tk.Entry(add_frame, font=("Arial", 9), relief="solid", borderwidth=1)
-        self.price_entry.grid(row=2, column=1, padx=5, pady=6, sticky="ew")
+        self.price_entry.grid(row=3, column=1, padx=5, pady=6, sticky="ew")
 
-        tk.Label(add_frame, text="Cover Image:", font=("Arial", 9), bg=self.frame_bg).grid(row=2, column=2, sticky="w", padx=(15, 0), pady=6)
+        tk.Label(add_frame, text="Cover Image:", font=("Arial", 9), bg=self.frame_bg).grid(row=3, column=2, sticky="w", padx=(15, 0), pady=6)
 
         # Frame to hold image path entry and browse button together
         image_frame = tk.Frame(add_frame, bg=self.frame_bg)
-        image_frame.grid(row=2, column=3, sticky="ew", pady=6, padx=5)
+        image_frame.grid(row=3, column=3, sticky="ew", pady=6, padx=5)
 
         self.image_entry = tk.Entry(image_frame, font=("Arial", 9), relief="solid", borderwidth=1)
         self.image_entry.pack(side="left", fill="x", expand=True, padx=(0, 5))
@@ -203,67 +235,95 @@ class BookstoreGUI:
                                  relief="flat", cursor="hand2", padx=8, pady=2)
         browse_button.pack(side="left")
 
-        # ROW 3: Action Buttons
+        # ROW 4: Action Buttons
         add_button = tk.Button(add_frame, text="Add Book", command=self.add_book,
                               font=("Arial", 9), bg=self.button_bg, fg=self.button_fg,
                               relief="flat", cursor="hand2", padx=12, pady=6)
-        add_button.grid(row=3, column=0, padx=5, pady=10, sticky="ew")
+        add_button.grid(row=4, column=0, padx=5, pady=10, sticky="ew")
 
         edit_button = tk.Button(add_frame, text="Edit Book", command=self.edit_book,
                                font=("Arial", 9), bg=self.button_bg, fg=self.button_fg,
                                relief="flat", cursor="hand2", padx=12, pady=6)
-        edit_button.grid(row=3, column=1, padx=5, pady=10, sticky="ew")
+        edit_button.grid(row=4, column=1, padx=5, pady=10, sticky="ew")
 
-        # ROW 4: Select and Load for editing
-        tk.Label(add_frame, text="Select Book ID to Edit:", font=("Arial", 9), bg=self.frame_bg).grid(row=4, column=0, sticky="w", pady=6)
+        # Add separator line
+        separator1 = tk.Frame(add_frame, height=2, bg="#d0d0d0")
+        separator1.grid(row=5, column=0, columnspan=4, sticky="ew", pady=15)
+
+        # ROW 6: Edit section heading
+        edit_section_label = tk.Label(add_frame, text="Edit Existing Book (Load First)",
+                                     font=("Arial", 9, "bold"), bg=self.frame_bg)
+        edit_section_label.grid(row=6, column=0, columnspan=4, sticky="w", pady=(0, 8))
+
+        # ROW 7: Select and Load for editing
+        tk.Label(add_frame, text="Book ID:", font=("Arial", 9), bg=self.frame_bg).grid(row=7, column=0, sticky="w", pady=6)
         self.select_id_entry = tk.Entry(add_frame, font=("Arial", 9), relief="solid", borderwidth=1)
-        self.select_id_entry.grid(row=4, column=1, padx=5, pady=6, sticky="ew")
+        self.select_id_entry.grid(row=7, column=1, padx=5, pady=6, sticky="ew")
 
         # Load button to populate fields with selected book's data
         load_button = tk.Button(add_frame, text="Load Book", command=self.load_book_for_edit,
                                font=("Arial", 9), bg=self.button_bg, fg=self.button_fg,
                                relief="flat", cursor="hand2", padx=12, pady=6)
-        load_button.grid(row=4, column=2, padx=5, pady=6, sticky="ew")
+        load_button.grid(row=7, column=2, padx=5, pady=6, sticky="ew")
 
-        # ROW 5: Delete Book Section
-        tk.Label(add_frame, text="Delete Book by ID:", font=("Arial", 9), bg=self.frame_bg).grid(row=5, column=0, sticky="w", pady=6)
+        # Add separator line
+        separator2 = tk.Frame(add_frame, height=2, bg="#d0d0d0")
+        separator2.grid(row=8, column=0, columnspan=4, sticky="ew", pady=15)
+
+        # ROW 9: Delete section heading
+        delete_section_label = tk.Label(add_frame, text="Delete Book",
+                                       font=("Arial", 9, "bold"), bg=self.frame_bg)
+        delete_section_label.grid(row=9, column=0, columnspan=4, sticky="w", pady=(0, 8))
+
+        # ROW 10: Delete Book Section
+        tk.Label(add_frame, text="Book ID:", font=("Arial", 9), bg=self.frame_bg).grid(row=10, column=0, sticky="w", pady=6)
         self.delete_id_entry = tk.Entry(add_frame, font=("Arial", 9), relief="solid", borderwidth=1)
-        self.delete_id_entry.grid(row=5, column=1, padx=5, pady=6, sticky="ew")
+        self.delete_id_entry.grid(row=10, column=1, padx=5, pady=6, sticky="ew")
 
         # Delete button
         delete_button = tk.Button(add_frame, text="Delete Book", command=self.confirm_delete,
                                 font=("Arial", 9), bg="#8b4545", fg="white",
                                 relief="flat", cursor="hand2", padx=12, pady=6)
-        delete_button.grid(row=5, column=2, padx=5, pady=6, sticky="ew")
+        delete_button.grid(row=10, column=2, padx=5, pady=6, sticky="ew")
 
         # Clear All button
         clear_all_button = tk.Button(add_frame, text="Clear All Fields", command=self.clear_all_fields,
                                     font=("Arial", 9), bg="#6b6b6b", fg="white",
                                     relief="flat", cursor="hand2", padx=12, pady=6)
-        clear_all_button.grid(row=5, column=3, padx=5, pady=6, sticky="ew")
+        clear_all_button.grid(row=10, column=3, padx=5, pady=6, sticky="ew")
 
         # Add required field note
         tk.Label(add_frame, text="* Required field", font=("Arial", 8, "italic"),
-                bg=self.frame_bg, fg="#666666").grid(row=6, column=0, columnspan=4, sticky="w", pady=(5, 0))
+                bg=self.frame_bg, fg="#666666").grid(row=11, column=0, columnspan=4, sticky="w", pady=(5, 0))
 
     def show_instructions(self):
         """
-        Display initial instructions in the text area
+        Display instructions in the text area
+        Can be called at startup or when the user clicks Show Instructions button
         """
+        # Clear the text area first
+        self.text_area.delete(1.0, tk.END)
+
         instructions = """Welcome to the Bookstore Inventory System
 
 Getting Started:
 
-  1. View Books - Click the 'View Books' button to see all books in inventory
+  1. View Books - Click 'View Books' to see all books in inventory
+     (includes cover images if you've added them!)
 
-  2. Add a Book - Fill in the required fields (*) and click 'Add Book'
+  2. Add a New Book - Fill in the book details in the top section
+     (fields marked with * are required), then click 'Add Book'
 
-  3. Edit a Book - Enter a Book ID in 'Select Book ID to Edit', click 'Load Book',
-     make your changes, then click 'Edit Book'
+  3. Edit a Book - FIRST enter the Book ID in the middle section and click 'Load Book'
+     to populate the fields above, THEN make your changes and click 'Edit Book'
 
-  4. Delete a Book - Enter a Book ID in 'Delete Book by ID' and click 'Delete Book'
+  4. Delete a Book - Enter the Book ID in the bottom section and click 'Delete Book'
+     (you'll get a confirmation before it's deleted)
 
-Note: Fields marked with * are required
+Tips:
+  - Use the 'Browse...' button to select a cover image for your book
+  - Click 'Clear All Fields' to reset the form
+  - Book IDs must be unique numbers
 """
         self.text_area.insert(tk.END, instructions)
 
@@ -506,6 +566,39 @@ Note: Fields marked with * are required
         while current.left is not None:
             current = current.left
         return current
+
+    def load_book_image(self, image_path):
+        """
+        Load a book cover image and resize it for display in the text area
+        Returns a PhotoImage object that tkinter can display
+        Uses Pillow to resize, then converts to PhotoImage
+        """
+        try:
+            # Import PIL for image resizing
+            from PIL import Image, ImageTk
+
+            # Open the image using Pillow
+            img = Image.open(image_path)
+
+            # Resize to thumbnail size (80 pixels tall, width proportional)
+            # This keeps images small and consistent in the display
+            thumbnail_height = 80
+            aspect_ratio = img.width / img.height
+            thumbnail_width = int(thumbnail_height * aspect_ratio)
+
+            # Resize the image using LANCZOS for good quality
+            img_resized = img.resize((thumbnail_width, thumbnail_height), Image.Resampling.LANCZOS)
+
+            # Convert to PhotoImage so tkinter can use it
+            photo = ImageTk.PhotoImage(img_resized)
+
+            return photo
+
+        except Exception as e:
+            # If image can't be loaded, just skip it
+            # This could happen if file was moved or deleted
+            print(f"[WARNING] Could not load image {image_path}: {e}")
+            return None
 
     def browse_image(self):
         """
