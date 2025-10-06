@@ -35,7 +35,7 @@ class BookstoreGUI:
         self.quick_lookup = HashTable()      # For fast ID-based searches
         self.tree_lookup = BinaryTree()      # For alphabetical sorting/searching
 
-        # Add some sample books so I have data to work with
+        # Add some sample books
         self.load_sample_books()
 
         # Add basic labels - no styling yet
@@ -63,7 +63,7 @@ class BookstoreGUI:
         This provides data to work with for testing the GUI
         """
 
-        # Create sample books (same ones from main.py for consistency)
+        # Create sample books
         sample_books = [
             Book(12345, "Harry Potter", "J.K. Rowling", "Fantasy", 29.99),
             Book(67890, "Animal Farm", "George Orwell", "Fiction", 19.99),
@@ -117,11 +117,11 @@ class BookstoreGUI:
     def create_add_book_frame(self):
         """
         Create a frame with input fields for adding and editing books
-        Grid layout used to organize the input fields neatly
+        Grid layout used
         """
         
         # LabelFrame creates a bordered box with a title
-        add_frame = tk.LabelFrame(self.root, text="Add/Edit Book", padx=10, pady=10)
+        add_frame = tk.LabelFrame(self.root, text="Add/Edit/Delete Book", padx=10, pady=10)
         
         # pack() places the frame on the window
         # fill="x" makes it stretch horizontally
@@ -154,7 +154,7 @@ class BookstoreGUI:
         self.price_entry = tk.Entry(add_frame, width=10)
         self.price_entry.grid(row=2, column=1, padx=5)
         
-        # Edit button - yellow color to distinguish from Add
+        # Edit button - yellow color
         edit_button = tk.Button(add_frame, text="Edit Book", command=self.edit_book,
                                bg="yellow", fg="black")
         edit_button.grid(row=2, column=2, padx=5, pady=5)
@@ -174,10 +174,24 @@ class BookstoreGUI:
                                bg="lightblue", fg="black")
         load_button.grid(row=3, column=2, padx=5, pady=5)
 
+        # ROW 4: Delete Book Section
+        tk.Label(add_frame, text="Delete Book by ID:").grid(row=4, column=0, sticky="w")
+        self.delete_id_entry = tk.Entry(add_frame, width=15)
+        self.delete_id_entry.grid(row=4, column=1, padx=5)
+
+        # Delete button - red
+        delete_button = tk.Button(add_frame, text="Delete Book", command=self.confirm_delete,
+                                bg="red", fg="white")
+        delete_button.grid(row=4, column=2, padx=5, pady=5)
+
+        # Clear All button
+        clear_all_button = tk.Button(add_frame, text="Clear All Fields", command=self.clear_all_fields,
+                                    bg="gray", fg="white")
+        clear_all_button.grid(row=4, column=3, padx=5, pady=5)
+
     def add_book(self):
         """
         Add a new book to all data structures
-        This handles getting input, validating it, and updating everything
         """
         
         # Using try/except to handle potential errors (like invalid numbers)
@@ -200,7 +214,7 @@ class BookstoreGUI:
                 return
             
             # Check if book ID already exists using my hash table
-            if self.quick_lookup.search_book(book_id):
+            if self.quick_lookup.find_book(book_id):
                 self.show_message("Error", f"Book with ID {book_id} already exists")
                 return
             
@@ -237,7 +251,7 @@ class BookstoreGUI:
             book_id = int(self.select_id_entry.get())
             
             # Use hash table to find the book quickly
-            book = self.quick_lookup.search_book(book_id)
+            book = self.quick_lookup.find_book(book_id)
             
             if book is None:
                 # Book not found
@@ -297,7 +311,7 @@ class BookstoreGUI:
                 return
             
             # Find the existing book in hash table
-            old_book = self.quick_lookup.search_book(book_id)
+            old_book = self.quick_lookup.find_book(book_id)
             
             if old_book is None:
                 self.show_message("Error", "Book no longer exists in inventory")
@@ -307,17 +321,17 @@ class BookstoreGUI:
             old_title = old_book.title
             
             # Update the book object with new values
-            # Since we're using references, updating the object updates it everywhere
+            # updating the object updates it everywhere
             old_book.title = new_title
             old_book.author = new_author
             old_book.genre = new_genre
             old_book.price = new_price
             
             # Special handling for binary tree if title changed
-            # Tree needs reorganizing if the sort key (title) changed
+            # Tree needs reorganising if the sort key (title) changed
             if old_title != new_title:
                 # Remove old entry and add with new title
-                # This maintains proper alphabetical ordering
+                # maintains proper alphabetical ordering
                 self.tree_lookup.root = self._remove_from_tree(self.tree_lookup.root, old_title)
                 self.tree_lookup.add_book(old_book)
                 print(f"[EDIT] Book title changed, reorganized in binary tree")
@@ -344,8 +358,7 @@ class BookstoreGUI:
 
     def _remove_from_tree(self, node, title):
         """
-        Helper method to remove a node from binary tree by title
-        This is needed when we change a book's title during edit
+        remove a node from binary tree by title
         """
         if node is None:
             return node
@@ -426,6 +439,181 @@ class BookstoreGUI:
         """
         self.root.mainloop()
 
+
+
+
+    def confirm_delete(self):
+        """
+        confirmation dialog before deleting a book
+        """
+        try:
+            # Get the book ID to delete
+            book_id = int(self.delete_id_entry.get())
+        
+            # check if the book exists using hash table
+            book = self.quick_lookup.find_book(book_id)
+        
+            if book is None:
+                self.show_message("Error", f"No book found with ID {book_id}")
+                return
+        
+            # Create confirmation dialog
+            confirmation_popup = tk.Toplevel(self.root)
+            confirmation_popup.title("Confirm Deletion")
+            confirmation_popup.geometry("400x150")
+        
+            # Warning message with book details
+            warning_text = f"Are you sure you want to delete this book?\n\n"
+            warning_text += f"ID: {book.book_id}\n"
+            warning_text += f"Title: {book.title}\n"
+            warning_text += f"Author: {book.author}\n\n"
+            warning_text += "This action cannot be undone!"
+        
+            label = tk.Label(confirmation_popup, text=warning_text, justify="left")
+            label.pack(pady=10)
+        
+            # Button frame for Yes/No buttons
+            button_frame = tk.Frame(confirmation_popup)
+            button_frame.pack(pady=10)
+        
+            # Yes button
+            yes_button = tk.Button(button_frame, text="Yes, Delete", 
+                                command=lambda: self.delete_book(book_id, confirmation_popup),
+                                bg="red", fg="white", width=12)
+            yes_button.pack(side="left", padx=5)
+        
+            # No button - cancel deletion
+            no_button = tk.Button(button_frame, text="Cancel", 
+                                command=confirmation_popup.destroy,
+                                bg="gray", fg="white", width=12)
+            no_button.pack(side="left", padx=5)
+        
+            # Make it modal
+            confirmation_popup.transient(self.root)
+            confirmation_popup.grab_set()
+        
+        except ValueError:
+            self.show_message("Error", "Please enter a valid book ID number")
+            print(f"[ERROR] Invalid ID")
+
+
+    def delete_book(self, book_id, popup_window):
+        """
+        Actually delete the book from all data structures after confirmation
+        """
+        try:
+            # Get book details before deletion for logging
+            book = self.quick_lookup.find_book(book_id)
+            
+            if book is None:
+                self.show_message("Error", "Book no longer exists")
+                popup_window.destroy()
+                return
+        
+            # Store book details for success message
+            book_title = book.title
+            
+            # Remove from hash table
+            delete_success = self.quick_lookup.remove_book(book_id)
+            
+            if not delete_success:
+                self.show_message("Error", "Failed to delete from hash table")
+                popup_window.destroy()
+                return
+        
+            # Remove from linked list
+            self.delete_from_linked_list(book_id)
+            
+            # Remove from binary tree (by title)
+            self.tree_lookup.root = self._remove_from_tree(self.tree_lookup.root, book_title)
+            
+            # Close confirmation popup
+            popup_window.destroy()
+            
+            # Clear the delete ID field
+            self.delete_id_entry.delete(0, tk.END)
+            
+            # Refresh the display
+            self.view_books()
+            
+            # Show success message
+            self.show_message("Success", f"Book '{book_title}' has been deleted from inventory")
+            
+            # Log for testing
+            print(f"[DELETE] Book deleted: ID={book_id}, Title='{book_title}'")
+            print(f"[DELETE] Remaining books in inventory: {self.inventory.size}")
+            
+        except Exception as e:
+            self.show_message("Error", f"Failed to delete book: {str(e)}")
+            popup_window.destroy()
+            print(f"[ERROR] Exception during deletion: {e}")
+
+
+    def delete_from_linked_list(self, book_id):
+        """
+        Remove a book from the double linked list by ID
+        Handles all the pointer adjustments for double linking
+        """
+        current = self.inventory.head
+        
+        while current is not None:
+            if current.data.book_id == book_id:
+                # Found the node to delete
+                
+                # If deleting the head node
+                if current == self.inventory.head:
+                    self.inventory.head = current.next
+                    if self.inventory.head:
+                        self.inventory.head.prev = None
+                    else:
+                        # List is now empty
+                        self.inventory.tail = None
+                
+                # If deleting the tail node
+                elif current == self.inventory.tail:
+                    self.inventory.tail = current.prev
+                    if self.inventory.tail:
+                        self.inventory.tail.next = None
+                
+                # If deleting a middle node
+                else:
+                    current.prev.next = current.next
+                    current.next.prev = current.prev
+                
+                # Decrease the size
+                self.inventory.size -= 1
+                
+                print(f"[DELETE] Book removed from linked list. New size: {self.inventory.size}")
+                return True
+            
+            current = current.next
+        
+        print(f"[WARNING] Book ID {book_id} not found in linked list")
+        return False
+
+  
+    def clear_all_fields(self):
+        """
+        Clear all input fields including the delete and select fields
+        Useful for resetting the form completely
+        """
+        # Clear main input fields
+        self.clear_entries()
+        
+        # Clear selection field
+        if hasattr(self, 'select_id_entry'):
+            self.select_id_entry.delete(0, tk.END)
+        
+        # Clear delete field
+        if hasattr(self, 'delete_id_entry'):
+            self.delete_id_entry.delete(0, tk.END)
+        
+        # Make sure ID field is editable
+        self.id_entry.config(state='normal')
+        
+        print("[CLEAR] All fields cleared")
+
+    
 
 # Test the application if this file is run directly
 if __name__ == "__main__":

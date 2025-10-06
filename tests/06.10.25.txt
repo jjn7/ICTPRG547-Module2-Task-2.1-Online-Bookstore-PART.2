@@ -1,0 +1,158 @@
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////
+# TEST 22 - CHECKING DELETE BOOK FUNCTIONALITY - 06/10/2025
+
+## CODE ADDED TO create_add_book_frame():
+        # ROW 4: Delete Book Section
+        tk.Label(add_frame, text="Delete Book by ID:").grid(row=4, column=0, sticky="w")
+        self.delete_id_entry = tk.Entry(add_frame, width=15)
+        self.delete_id_entry.grid(row=4, column=1, padx=5)
+
+        # Delete button - red
+        delete_button = tk.Button(add_frame, text="Delete Book", command=self.confirm_delete,
+                                bg="red", fg="white")
+        delete_button.grid(row=4, column=2, padx=5, pady=5)
+
+        # Clear All button
+        clear_all_button = tk.Button(add_frame, text="Clear All Fields", command=self.clear_all_fields,
+                                    bg="gray", fg="white")
+        clear_all_button.grid(row=4, column=3, padx=5, pady=5)
+
+## NEW METHODS ADDED:
+    def confirm_delete(self):
+        # Shows confirmation dialog before deleting
+
+    def delete_book(self, book_id, popup_window):
+        # Actually deletes the book from all data structures
+
+    def delete_from_linked_list(self, book_id):
+        # Removes book from double linked list with proper pointer handling
+
+    def clear_all_fields(self):
+        # Clears all input fields including delete and select fields
+
+
+## INPUT:
+Book ID to Delete: 67890
+
+## EXPECTED RESULT:
+- Confirmation popup shows book details: "Animal Farm: A Fairy Story" by George Orwell
+- Warning message: "This action cannot be undone!"
+- After clicking "Yes, Delete": Success message and book removed from all displays
+
+## RESULT (CORRECT):
+- Confirmation dialog appeared with correct book details
+- Book ID 67890 (Animal Farm: A Fairy Story) shown in popup
+- After confirmation, success popup: "Book 'Animal Farm: A Fairy Story' has been deleted from inventory"
+- Console: [DELETE] Book deleted: ID=67890, Title='Animal Farm: A Fairy Story'
+- Console: [DELETE] Remaining books in inventory: 3
+
+
+
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////
+# TEST 23 - DELETE NON-EXISTENT BOOK - 06/10/2025
+
+## ACTION:
+1. Enter book ID 88888 in "Delete Book by ID" field
+2. Click "Delete Book" button
+
+## EXPECTED RESULT:
+- Error popup: "No book found with ID 88888"
+- No confirmation dialog appears
+- No changes to inventory
+
+## RESULT (CORRECT):
+- Error popup displayed correctly
+- No confirmation dialog shown
+- Inventory remains unchanged
+- Console: [ERROR] Invalid ID (for non-existent book)
+
+
+
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////
+# TEST 24 - DELETE FIRST BOOK (HEAD OF LIST) - 06/10/2025
+
+## ACTION:
+1. Enter book ID 12345 (Harry Potter - first book in list) in delete field
+2. Click "Delete Book" button
+3. Click "Yes, Delete" in confirmation
+
+## EXPECTED RESULT:
+- Confirmation shows Harry Potter details
+- After deletion: Book removed from beginning of list
+- Remaining books shift up in display order
+- Linked list head pointer updated correctly
+
+## RESULT (CORRECT):
+- Confirmation popup showed: "Harry Potter" by J.K. Rowling
+- After deletion, book #1 is now "The Great Gatsby" (was previously book #2)
+- Success message: "Book 'Harry Potter' has been deleted from inventory"
+- Console: [DELETE] Book removed from linked list. New size: 2
+- Console: [DELETE] Book deleted: ID=12345, Title='Harry Potter'
+- View Books shows 2 remaining books in correct order
+
+
+
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////
+# TEST 25 - DELETE LAST BOOK (TAIL OF LIST) - 06/10/2025
+
+## ACTION:
+1. Enter book ID 99999 (Python Programming - last book added) in delete field
+2. Click "Delete Book" button
+3. Click "Yes, Delete" in confirmation
+
+## EXPECTED RESULT:
+- Confirmation shows Python Programming details
+- After deletion: Book removed from end of list
+- Linked list tail pointer updated correctly
+- Book count decreases by 1
+
+## RESULT (CORRECT):
+- Confirmation popup showed: "Python Programming" by John Smith
+- After deletion, book no longer appears at end of list
+- Success message: "Book 'Python Programming' has been deleted from inventory"
+- Console: [DELETE] Book removed from linked list. New size: 1
+- Console: [DELETE] Book deleted: ID=99999, Title='Python Programming'
+- Only 1 book remains: "The Great Gatsby"
+- Book count label updated to "Books loaded: 1"
+
+
+
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////
+# TEST 26 - DELETE MIDDLE BOOK AND VERIFY DATA STRUCTURE INTEGRITY - 06/10/2025
+
+## SETUP:
+First added 2 more test books:
+- ID 11111: "Test Book A" by "Author A"
+- ID 22222: "Test Book B" by "Author B"
+Total books: 3 (The Great Gatsby, Test Book A, Test Book B)
+
+## ACTION:
+1. Enter book ID 23456 (The Great Gatsby - middle book) in delete field
+2. Click "Delete Book" button
+3. Click "Yes, Delete" in confirmation
+4. Click "View Books" to verify structure
+
+## EXPECTED RESULT:
+- Middle book removed with proper pointer linking
+- Previous and next nodes correctly connected
+- No broken links in double linked list
+- Hash table and binary tree also updated
+
+## RESULT (CORRECT):
+- Confirmation popup showed: "The Great Gatsby" by F.S. Fitzgerald
+- After deletion: Test Book A and Test Book B still properly linked
+- Success message: "Book 'The Great Gatsby' has been deleted from inventory"
+- Console: [DELETE] Book removed from linked list. New size: 2
+- Remaining books display correctly in order
+- No gaps or broken connections in list traversal
+- Hash table search for ID 23456 returns None (properly removed)
+- Binary tree no longer contains "The Great Gatsby" entry
